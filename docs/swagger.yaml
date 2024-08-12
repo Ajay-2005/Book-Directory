@@ -1,0 +1,117 @@
+swagger: '2.0'
+info:
+  title: Book API
+  version: 1.0.0
+  description: This API provides a simple interface for managing a directory of books. Users can add new books, retrieve details of existing books, update book information, and delete books from the directory.
+paths:
+  /api/v1/books:
+    get:
+      summary: Get all books
+      responses:
+        200:
+          description: Successful response
+  /api/v1/book:
+    post:
+      summary: Create a new book
+      parameters:
+        - in: body
+          name: book
+          description: The book to create
+          required: true
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              isbn:
+                type: string
+              pageCount:
+                type: integer
+              publishedDate:
+                type: string
+              thumbnailUrl:
+                type: string
+              shortDescription:
+                type: string
+              longDescription:
+                type: string
+              authors:
+                type: array
+                items:
+                  type: string
+              categories:
+                type: array
+                items:
+                  type: string
+      responses:
+        200:
+          description: Successful response
+  /api/v1/book/{id}:
+    get:
+      summary: Get a specific book by ID
+      parameters:
+        - in: path
+          name: id
+          description: ID of the book
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response
+        404:
+          description: Book not found
+    put:
+      summary: Update a book by ID
+      parameters:
+        - in: path
+          name: id
+          description: ID of the book
+          required: true
+          type: string
+        - in: body
+          name: book
+          description: Updated book information
+          required: true
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              isbn:
+                type: string
+              pageCount:
+                type: integer
+              publishedDate:
+                type: string
+              thumbnailUrl:
+                type: string
+              shortDescription:
+                type: string
+              longDescription:
+                type: string
+              authors:
+                type: array
+                items:
+                  type: string
+              categories:
+                type: array
+                items:
+                  type: string
+      responses:
+        200:
+          description: Successful response
+        404:
+          description: Book not found
+    delete:
+      summary: Delete a book by ID
+      parameters:
+        - in: path
+          name: id
+          description: ID of the book
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response
+        404:
+          description: Book not found
