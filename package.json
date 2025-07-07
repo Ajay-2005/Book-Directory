@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "chmod +x ./node_modules/.bin/jest"
     "test": "jest",
     "dev": "nodemon index.js"
   },
