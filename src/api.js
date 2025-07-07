@@ -1,19 +1,21 @@
-const router = require("express").Router()
-const books = require('./books_list')
-let BookDirectory = books
+const router = require("express").Router();
+const books = require('./books_list');
+let BookDirectory = books;
+
 router.get('/books', (req, res) => {
-    res.send(BookDirectory)
-})
-router.get('/books/:id', (req, res) => {
-    const { id } = req.params
-    const books = BookDirectory.find(b => b.isbn === id)
-    if (!books) {
-        return res.status(404).send("Book does not exist")
-    }
-    res.send(books)
+    res.send(BookDirectory);
+});
 
-})
-router.post('/books', (req, res) => {
+router.get('/book/:id', (req, res) => {
+    const { id } = req.params;
+    const book = BookDirectory.find(b => b.isbn === id);
+    if (!book) {
+        return res.status(404).send("Book does not exist");
+    }
+    res.send(book);
+});
+
+router.post('/book', (req, res) => {
     const {
         title,
         isbn,
@@ -24,12 +26,14 @@ router.post('/books', (req, res) => {
         longDescription,
         authors,
         categories
-    } = req.body
-    const BookExist = BookDirectory.find(b => b.isbn === isbn)
-    if (BookExist) {
-        return res.status(404).send("Book already existed")
+    } = req.body;
+
+    const bookExist = BookDirectory.find(b => b.isbn === isbn);
+    if (bookExist) {
+        return res.status(400).send("Book already exists");
     }
-    const B = {
+
+    const newBook = {
         title,
         isbn,
         pageCount,
@@ -39,13 +43,14 @@ router.post('/books', (req, res) => {
         longDescription,
         authors,
         categories
-    }
-    BookDirectory.push(B)
-    res.send(B)
+    };
+    
+    BookDirectory.push(newBook);
+    res.send(newBook);
+});
 
-})
-router.put('/books/:id', (req, res) => {
-    const { id } = req.params
+router.put('/book/:id', (req, res) => {
+    const { id } = req.params;
     const {
         title,
         isbn,
@@ -56,37 +61,41 @@ router.put('/books/:id', (req, res) => {
         longDescription,
         authors,
         categories
-    } = req.body
-    let Book = BookDirectory.find(b => b.isbn === id)
-    if (!Book) {
-        return res.status(404).send("book does not exist ")
-    }
-    const updateField=(val,prev)=>!val?prev:val
-    const updatedBook={
-        title:updateField(title,Book.title),
-        isbn:updateField(isbn,Book.isbn),
-        pageCount:updateField(pageCount,Book.pageCount),
-        publishedDate:updateField(publishedDate,Book.publishedDate),
-        thumbnailUrl:updateField(thumbnailUrl,Book.thumbnailUrl),
-        shortDescription:updateField(shortDescription,Book.shortDescription),
-        longDescription:updateField(longDescription,Book.longDescription),
-        authors:updateField(authors,books.authors),
-        categories:updateField(categories,Book.updateField)
-    }
-    const bookIndex=BookDirectory.findIndex(b=>b.isbn===book.isbn)
-    BookDirectory.splice(bookIndex,1,updatedBook)
-    res.status(404).send(updatedBook)
+    } = req.body;
 
-}
-)
-router.delete('/books/:id', (req, re) => {
-    const{id}=req.params
-    let Book=BookDirectory.find(b=>b.isbn===id)
-    if(!Book){
-        return res.status.send(404).send("Book does not exist")
+    let book = BookDirectory.find(b => b.isbn === id);
+    if (!book) {
+        return res.status(404).send("Book does not exist");
     }
-    BookDirectory.filter(b=>b.isbn !== id)
-    res.send("successs")
 
-})
+    const updateField = (val, prev) => val ? val : prev;
+    const updatedBook = {
+        title: updateField(title, book.title),
+        isbn: updateField(isbn, book.isbn),
+        pageCount: updateField(pageCount, book.pageCount),
+        publishedDate: updateField(publishedDate, book.publishedDate),
+        thumbnailUrl: updateField(thumbnailUrl, book.thumbnailUrl),
+        shortDescription: updateField(shortDescription, book.shortDescription),
+        longDescription: updateField(longDescription, book.longDescription),
+        authors: updateField(authors, book.authors),
+        categories: updateField(categories, book.categories)
+    };
+
+    const bookIndex = BookDirectory.findIndex(b => b.isbn === book.isbn);
+    BookDirectory.splice(bookIndex, 1, updatedBook);
+    res.status(200).send(updatedBook);
+});
+
+router.delete('/book/:id', (req, res) => {
+    const { id } = req.params;
+    const bookIndex = BookDirectory.findIndex(b => b.isbn === id);
+
+    if (bookIndex === -1) {
+        return res.status(404).send("Book does not exist");
+    }
+
+    BookDirectory.splice(bookIndex, 1);
+    res.send("Success");
+});
+
 module.exports = router;
